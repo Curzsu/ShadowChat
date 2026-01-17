@@ -83,7 +83,7 @@ llm_backend/
 ### 1. 安装依赖
 
 ```bash
-# 创建conda环境，带 Python 3.11 环境，名字叫llm_app（推荐，兼容性好）
+# 创建conda环境，带 Python 3.11 环境（推荐，兼容性好），名字叫llm_app
 conda create -n llm_app python=3.11 -y
  
 # 激活环境
