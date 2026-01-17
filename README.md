@@ -1,6 +1,14 @@
-# 问道星辰 - 基于大语言模型构建的智能客服系统
+# 基于大语言模型构建的智能客服系统
 
 一个基于 FastAPI 和 Vue 3 构建的前后端分离的智能客服助手项目，支持多种大语言模型，如DeepSeek V3，Qwen2.5系列，Llama3系列等。涵盖了 Agent、RAG 在智能客服领域的主流应用落地需求场景。 
+
+![image-20260117170921462](images-README/image-20260117170921462.png)
+
+![image-20260117170938689](images-README/image-20260117170938689.png)
+
+
+
+
 
 ## 功能特性
 
@@ -21,23 +29,68 @@
 - 系统资源监控
 - 自动化测试报告
 
+
+
+## 项目架构
+
+```
+llm_backend/
+├── main.py                 # FastAPI 应用入口点
+├── run.py                  # 服务器启动脚本
+├── requirements.txt        # Python 依赖项
+├── .env                    # 环境配置
+├── scripts/
+│   └── init_db.py         # 数据库初始化
+└── app/
+    ├── __init__.py
+    ├── api/               # API 路由定义
+    │   ├── __init__.py
+    │   └── auth.py        # 身份验证端点
+    ├── core/              # 核心基础设施
+    │   ├── config.py      # 配置管理
+    │   ├── database.py    # 数据库连接
+    │   ├── logger.py      # 日志配置
+    │   ├── middleware.py  # 自定义中间件
+    │   ├── security.py    # 安全工具
+    │   └── hashing.py     # 密码哈希
+    ├── graphrag/          # GraphRAG 集成
+    ├── lg_agent/          # LangGraph agent 系统
+    ├── models/            # 数据库模型
+    ├── prompts/           # 提示词模板
+    ├── schemas/           # Pydantic 模式
+    ├── services/          # 业务逻辑
+    │   ├── llm_factory.py # LLM 服务工厂
+    │   ├── search_service.py # 搜索服务
+    │   └── conversation_service.py # 对话管理
+    └── tools/             # Agent 工具
+
+```
+
+
+
+![image-20260117171040049](images-README/image-20260117171040049.png)
+
+
+
+
+
 ## 快速启动
 
 ### 1. 安装依赖
 
 ```bash
-# 创建虚拟环境
-python -m venv .venv
-
-# 激活虚拟环境
-# Windows
-.venv\Scripts\activate
-# Linux/Mac
-source .venv/bin/activate
+# 创建conda环境，带 Python 3.11 环境，名字叫llm_app（推荐，兼容性好）
+conda create -n llm_app python=3.11 -y
+ 
+# 激活环境
+conda activate llm_app
 
 # 安装依赖
+pip install "numpy<2.0.0" pyarrow==15.0.0
 pip install -r requirements.txt
 ```
+
+
 
 ### 2. 配置环境变量
 
@@ -58,7 +111,11 @@ DEEPSEEK_API_KEY=your-api-key
 DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
 DEEPSEEK_MODEL=deepseek-chat
 ```
+
+
 ### 3. 安装Mysql数据库并在 `.env` 文件中配置数据库连接信息
+
+
 
 ### 4. 启动服务
 
@@ -81,5 +138,5 @@ uvicorn.run(
 ```
 
 服务启动后可以访问：
-- API 文档：http://localhost:8000/docs
+- Swagger UI（API 文档）：http://localhost:8000/docs
 - 前端界面：http://localhost:8000

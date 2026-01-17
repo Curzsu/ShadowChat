@@ -204,10 +204,7 @@ class SearchService:
                         content = chunk.choices[0].delta.content
                         full_response.append(content)
                         # 包装直接回答的内容
-                        yield f"data: {json.dumps({
-                            'type': 'direct_content',
-                            'content': content
-                        }, ensure_ascii=False)}\n\n"
+                        yield f"data: {json.dumps({'type': 'direct_content', 'content': content}, ensure_ascii=False)}\n\n"
                 
                 # 如果需要保存对话
                 if on_complete and user_id is not None and conversation_id is not None:
