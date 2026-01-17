@@ -105,10 +105,12 @@ pip install -r requirements.txt
 CHAT_SERVICE=OLLAMA  # 或 DEEPSEEK
 REASON_SERVICE=OLLAMA  # 或 DEEPSEEK
 
-# Ollama 配置
+# Ollama 配置，注意需要先用ollama依次下载以下涉及到的模型
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_CHAT_MODEL=deepseek-coder:6.7b
 OLLAMA_REASON_MODEL=deepseek-coder:6.7b
+OLLAMA_EMBEDDING_MODEL=bge-m3
+OLLAMA_AGENT_MODEL=qwen2.5:7b
 
 # DeepSeek 配置（如果使用）
 DEEPSEEK_API_KEY=your-api-key
