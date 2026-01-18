@@ -141,8 +141,13 @@ uvicorn.run(
     log_level="error",
     reload=True
 )
+
+# 另外别忘了打开ollama服务，否则会无法正常使用（此时向大模型提问，会报错“生成回复时出错: Cannot connect to host localhost:11434 ssl:default [Multiple exceptions: [Errno 10061] Connect call failed (‘::1’, 11434, 0, 0), [Errno 10061] Connect call failed (‘127.0.0.1’, 11434)]）
 ```
 
+
+
 服务启动后可以访问：
+
 - Swagger UI（API 文档）：http://localhost:8000/docs
 - 前端界面：http://localhost:8000
