@@ -65,26 +65,30 @@ class SearchService:
         """处理搜索请求"""
         return await asyncio.to_thread(self.search_tool.search, query)
 
-    async def _call_with_tool(self, query: str) -> Dict:
+    async def _call_with_tool(self, messages: List[Dict]) -> Dict:
         """调用模型并获取工具调用结果"""
         try:
-            logger.info(f"Calling model with query: {query}")
-            
+            logger.info(f"Calling model with {len(messages)} messages")
 
-            logger.info(f"Messages: {query}")
-            
             response = await self.client.chat.completions.create(
                 model=self.model,
-                messages=query,
+                messages=messages,
                 tools=self.tool_registry.get_tools_definition(),
-                tool_choice="auto"  # 让模型自己决定是否使用工具
+                tool_choice="auto"
             )
+
+            logger.info(f"Full response type: {type(response)}")
+            logger.info(f"Response choices: {response.choices}")
             
-            logger.info(f"Model response: {response.choices[0]}")
+            if not response.choices:
+                raise ValueError("No choices in response")
+                
+            logger.info(f"Model response received, finish_reason: {response.choices[0].finish_reason}")
             return response.choices[0]
             
         except Exception as e:
-            logger.error(f"Error in _call_with_tool: {str(e)}", exc_info=True)
+            logger.exception("Error in _call_with_tool")
+            logger.error(f"Exception type: {type(e).__name__}, args: {e.args}")
             raise
 
     async def generate_stream(
@@ -115,8 +119,12 @@ class SearchService:
             # 第一步：获取工具调用
             choice = await self._call_with_tool(messages)
             logger.info(f"Tool call response: {choice}")
-            
+
             # 根据finish_reason决定处理方式
+            if not hasattr(choice, 'finish_reason'):
+                logger.error(f"Invalid response structure: {choice}")
+                raise ValueError("Response does not have finish_reason attribute")
+
             if choice.finish_reason == "tool_calls":
                 # 需要搜索的情况
                 tool_calls = choice.message.tool_calls
@@ -212,5 +220,5 @@ class SearchService:
                     await on_complete(user_id, conversation_id, [{"role": "user", "content": query}], complete_response)
                 
         except Exception as e:
-            logger.error(f"Error in generate_stream: {str(e)}", exc_info=True)
+            logger.exception("Error in generate_stream")
             raise

@@ -115,14 +115,41 @@ async def chat_endpoint(request: ChatMessage):
 async def reason_endpoint(request: ReasonRequest):
     """推理接口"""
     try:
+        logger.info(f"=== REASON MODE ACTIVATED ===")
+        logger.info(f"User: {request.user_id}, Messages: {request.messages}")
         logger.info(f"Processing reasoning request for user {request.user_id}")
         reasoner = LLMFactory.create_reasoner_service()
-        
-        log_structured("reason_request", {
-            "user_id": request.user_id,
-            "message_count": len(request.messages),
-            "last_message": request.messages[-1]["content"][:100] + "..."
-        })
+
+        # 超强 system prompt
+        enhanced_messages = [
+                                {
+                                    "role": "system",
+                                    "content": """你是一个会深度思考的AI。你必须严格遵循以下格式：
+
+        <think>
+        [在这里详细展示你的思考过程]
+        - 首先分析问题
+        - 然后考虑多种可能的方案
+        - 权衡各个方案的优劣
+        - 最后选择最佳方案
+        </think>
+
+
+        [在这里给出最终答案]
+
+
+        无论问题难易，都必须先展示<think>部分，再给出。"""
+                                }
+                            ] + request.messages
+
+        logger.info(f"Enhanced messages count: {len(enhanced_messages)}")
+        logger.info(f"System prompt added: {enhanced_messages[0]}")
+
+        # log_structured("reason_request", {
+        #     "user_id": request.user_id,
+        #     "message_count": len(request.messages),
+        #     "last_message": request.messages[-1]["content"][:100] + "..."
+        # })
         
         return StreamingResponse(
             reasoner.generate_stream(request.messages),
