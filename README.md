@@ -123,7 +123,7 @@ DEEPSEEK_MODEL=deepseek-chat
 
 ### 3. 安装Mysql数据库并在 `.env` 文件中配置数据库连接信息
 
-
+完善你的mysql密码
 
 ### 4. 启动服务
 
